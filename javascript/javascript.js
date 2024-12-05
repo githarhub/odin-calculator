@@ -7,8 +7,9 @@ const calculation = {
         "-": (num1, num2) => num1 - num2,
         "*": (num1, num2) => num1 * num2,
         "/": (num1, num2) => num1 / num2,
-        "**": (num1, num2) => num1 ** num2,
-        "^": (num1) => Math.sqrt(num1)
+        "^": (num1, num2) => num1 ** num2,
+        "%": (num1, num2) => num1 % num2,
+        "!": (num1) => Math.sqrt(num1)
     },
 
 
@@ -24,11 +25,13 @@ const calculation = {
 function checkAndInspect(text) {
 
     // regex for checking only calculable character and number
-    const onlyCalculable = /^(?:[\d\s+\-*/^()]|\*\*)+$/;
+    const onlyCalculable = /^(?:[\d\s+\-*/^%!()])+$/;
     // regex for checking character or number after ( is valid
     const correctOpenParen = /^(?:[\d^(])+$/
     // regex for checking character or number after ) is valid
     const correctCloseParen = /^(?:[\d^)])+$/
+    // regex for checking character is +-*/%
+    const correctOpera = /[+\-*/%^]/;
 
 
     // check if it only include calculable character and number
@@ -41,7 +44,7 @@ function checkAndInspect(text) {
     toCalculate = text.replaceAll(" ", "").split(/([^\d])/).filter(Boolean);
     console.log(toCalculate)
 
-    length = toCalculate.length;
+    length = toCalculate.length - 1;
 
     // check array element is number and change string to number if it is
     toCalculate = toCalculate.map((element) => {
@@ -51,54 +54,80 @@ function checkAndInspect(text) {
     })
 
     // check and inspect parentheses for calculation
-    paren = toCalculate.reduce((paren, current, index, array) => {
+    const parenAndOpera = toCalculate.reduce((parenAndOpera, current, index, array) => {
 
 
         if (current == "(") {
-            paren.open += 1;
-            paren.struct += "(";
+            parenAndOpera.parenOpen += 1;
+            parenAndOpera.struct += "(";
 
             // check character after ( is valid
             if (!correctOpenParen.test(array[index + 1]) && index < length) {
 
-                paren.place = false;
+                parenAndOpera.place = false;
             }
 
         }
 
         else if (current == ")") {
-            paren.close += 1;
-            paren.struct += ")";
+            parenAndOpera.parenClose += 1;
+            parenAndOpera.struct += ")";
 
             // check character after ( is valid
             if (!correctCloseParen.test(array[index - 1]) && index < 0) {
 
-                paren.place = false;
+                parenAndOpera.place = false;
             }
 
             // check if ) come before (
-            else if (paren.close > paren.open) {
-                paren.place = false;
+            else if (parenAndOpera.close > parenAndOpera.open) {
+                parenAndOpera.place = false;
             }
         }
 
-        return paren;
+        else if (correctOpera.test(current)) {
+
+            if (index === 0 || index === length) {
+
+                parenAndOpera.place = false;
+            }
+
+            else if(correctOpera.test(array[index + 1])) {
+                parenAndOpera.place = false;
+
+            }
+        }
+
+        else if (current === "!") {
+            if (index == length) {
+                parenAndOpera.place = false;
+            }
+
+            else if(correctOpera.test(array[index + 1])) {
+                parenAndOpera.place = false;
+
+            }
+        }
+
+        return parenAndOpera;
     }, {
-        open: 0,
-        close: 0,
+        parenOpen: 0,
+        parenClose: 0,
         place: true,
         struct: ""
 
     })
 
-    if (paren.place === false || !(paren.open === paren.close)) {
+    if (parenAndOpera.place == false || !(parenAndOpera.parenOpen === parenAndOpera.parenClose)) {
 
         return console.log("Not Calculable")
     }
 
-    return [toCalculate, paren.struct]
+    return [toCalculate, parenAndOpera.struct]
 
 }
+
+
 
 
 
