@@ -25,7 +25,7 @@ const calculation = {
 function checkAndInspect(text) {
 
     // regex for checking only calculable character and number
-    const onlyCalculable = /^(?:[\d\s+\-*/^%!()])+$/;
+    const onlyCalculable = /^(?:[\d\s+\-*/^%!().])+$/;
     // regex for checking character or number after ( is valid
     const correctOpenParen = /^(?:[\d^(!])+$/
     // regex for checking character or number after ) is valid
@@ -43,7 +43,9 @@ function checkAndInspect(text) {
 
 
     // delete all white space, split when it isn't number and filter to remove empty array item 
-    toCalculate = text.replaceAll(" ", "").split(/([^\d])/).filter(Boolean);
+    toCalculate = text.replaceAll(" ", "").split(/([^\d.])/).filter(Boolean);
+
+    console.log(toCalculate)
 
     // get length and reduce by  1 to check last index
     length = toCalculate.length - 1;
@@ -248,6 +250,46 @@ function operation(toCalculate) {
         return true;
     })
 
+        // calculate % operators
+        toCalculate = toCalculate.filter((element, index) => {
+
+            if (toCalculate[index + 1] == "%") {
+    
+                // filter element after current % element
+                return false;
+            }
+    
+            else if (element == "%") {
+    
+                // perform calculation by calling calculate in calculation and passing number elements before and after current % element
+                toCalculate[index + 1] = calculation.calculate(element, toCalculate[index - 1], toCalculate[index + 1])
+                return false;
+    
+            }
+    
+            return true;
+        })
+
+            // calculate / operators
+    toCalculate = toCalculate.filter((element, index) => {
+
+        if (toCalculate[index + 1] == "/") {
+
+            // filter element after current / element
+            return false;
+        }
+
+        else if (element == "/") {
+
+            // perform calculation by calling calculate in calculation and passing number elements before and after current / element
+            toCalculate[index + 1] = calculation.calculate(element, toCalculate[index - 1], toCalculate[index + 1])
+            return false;
+
+        }
+
+        return true;
+    })
+
     // calculate + and - operators 
     calculatedNum = toCalculate.reduce((total, current, index) => {
 
@@ -269,6 +311,7 @@ function operation(toCalculate) {
     return calculatedNum;
 
 }
+
 
 
 
