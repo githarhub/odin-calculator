@@ -251,27 +251,27 @@ function operation(toCalculate) {
         return true;
     })
 
-        // calculate % operators
-        toCalculate = toCalculate.filter((element, index) => {
+    // calculate % operators
+    toCalculate = toCalculate.filter((element, index) => {
 
-            if (toCalculate[index + 1] == "%") {
-    
-                // filter element after current % element
-                return false;
-            }
-    
-            else if (element == "%") {
-    
-                // perform calculation by calling calculate in calculation and passing number elements before and after current % element
-                toCalculate[index + 1] = calculation.calculate(element, toCalculate[index - 1], toCalculate[index + 1])
-                return false;
-    
-            }
-    
-            return true;
-        })
+        if (toCalculate[index + 1] == "%") {
 
-            // calculate / operators
+            // filter element after current % element
+            return false;
+        }
+
+        else if (element == "%") {
+
+            // perform calculation by calling calculate in calculation and passing number elements before and after current % element
+            toCalculate[index + 1] = calculation.calculate(element, toCalculate[index - 1], toCalculate[index + 1])
+            return false;
+
+        }
+
+        return true;
+    })
+
+    // calculate / operators
     toCalculate = toCalculate.filter((element, index) => {
 
         if (toCalculate[index + 1] == "/") {
@@ -313,9 +313,57 @@ function operation(toCalculate) {
 
 }
 
-console.log(operation("√25 + 6 - 1 + (6 + 1) ^ 2"))
+function getUserInputAndReturnResult() {
+
+    const numpadButtons = document.querySelectorAll(".cal-numpad-button");
+    const numpadButtonsAc = document.querySelector(".cal-numpad-button-ac");
+    const numpadButtonsDel = document.querySelector(".cal-numpad-button-del");
+    const operator = document.querySelector(".cal-numpad-button-operation");
+    const userInput = document.querySelector(".cal-input-text");
+
+    numpadButtons.forEach((button) => {
+
+        console.log(button.textContent)
+        button.addEventListener("click", () => {
+            console.log(button.textContent)
+            const inputOfButton = button.textContent;
+            userInput.value += inputOfButton;
+        })
+
+    })
+
+    operator.addEventListener("click", () => {
+
+        const result = operation(userInput.value);
+        userInput.value = result;
+        let error = false;    
+        if (typeof result == "string") {
+         error = true;
+            userInput.addEventListener("focus", () =>{
+                if (error == true) {
+                    userInput.value = "";
+                    error = false;
+                }
+            })
+        }
+    })
+
+    numpadButtonsAc.addEventListener("click", () => {
+
+        userInput.value = "";
+        
+    })
+
+    numpadButtonsDel.addEventListener("click", () => {
+
+        userInput.value = userInput.value.slice(0, -1);
+        
+    })
 
 
+}
+
+getUserInputAndReturnResult()
 
 
 
