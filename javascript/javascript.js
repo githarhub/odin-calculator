@@ -9,7 +9,8 @@ const calculation = {
         "/": (num1, num2) => num1 / num2,
         "^": (num1, num2) => num1 ** num2,
         "%": (num1, num2) => num1 % num2,
-        "!": (num1) => Math.sqrt(num1)
+        "√": (num1) => Math.sqrt(num1)
+
     },
 
 
@@ -25,14 +26,14 @@ const calculation = {
 function checkAndInspect(text) {
 
     // regex for checking only calculable character and number
-    const onlyCalculable = /^(?:[\d\s+\-*/^%!().])+$/;
+    const onlyCalculable = /^(?:[\d\s+\-*/^%√().])+$/;
     // regex for checking character or number after ( is valid
-    const correctOpenParen = /^(?:[\d^(!])+$/
+    const correctOpenParen = /^(?:[\d^(√])+$/
     // regex for checking character or number after ) is valid
     const correctCloseParen = /^(?:[\d^)])+$/
     // regex for checking character is +-*/%
     const correctOpera = /[+\-*/%^]/;
-    // regex for checking character before ! valid
+    // regex for checking character before √ valid
     const correctOperaSqr = /[\d)]/;
 
 
@@ -98,7 +99,7 @@ function checkAndInspect(text) {
             }
         }
 
-        else if (current === "!") {
+        else if (current === "√") {
             if (index == length) {
                 parenAndOperaAcc.place = false;
             }
@@ -170,7 +171,7 @@ function operation(toCalculate) {
             console.log(slicedToCalculated)
 
             // call recursion by passing sliced array 
-            result = operator(slicedToCalculated)
+            result = operation(slicedToCalculated)
             console.log("finish")
             console.log(result)
 
@@ -189,20 +190,20 @@ function operation(toCalculate) {
     //regex for checking + and -
     const checkAddAndSub = /[+\-]/;
 
-    // calculate ! operators
+    // calculate √ operators
     toCalculate = toCalculate.filter((element, index) => {
 
-        if (element == "!") {
+        if (element == "√") {
 
-            // perform calculation by calling calculate in calculation and passing number element after current ! element
+            // perform calculation by calling calculate in calculation and passing number element after current √ element
             toCalculate[index + 1] = calculation.calculate(element, toCalculate[index + 1]);
 
-            // filter current ! element from array
+            // filter current √ element from array
             return false;
 
         }
 
-        // do not filter any index beside index with ! element
+        // do not filter any index beside index with √ element
         return true;
     })
 
@@ -311,6 +312,8 @@ function operation(toCalculate) {
     return calculatedNum;
 
 }
+
+console.log(operation("√25 + 6 - 1 + (6 + 1) ^ 2"))
 
 
 
