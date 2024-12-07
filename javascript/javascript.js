@@ -13,7 +13,6 @@ const calculation = {
 
     },
 
-
     // perform calculation by calling method
     calculate: function (op, num1, num2) {
 
@@ -28,13 +27,13 @@ function checkAndInspect(text) {
     // regex for checking only calculable character and number
     const onlyCalculable = /^(?:[\d\s+\-*/^%√().])+$/;
     // regex for checking character or number after ( is valid
-    const correctOpenParen = /^(?:[\d^(√])+$/
+    const correctOpenParen = /^(?:[\d^(√]|\d\.\d)+$/
     // regex for checking character or number after ) is valid
-    const correctCloseParen = /^(?:[\d^)])+$/
+    const correctCloseParen = /^(?:[\d^)]|\d\.\d)+$/
     // regex for checking character is +-*/%
     const correctOpera = /[+\-*/%^]/;
     // regex for checking character before √ valid
-    const correctOperaSqr = /[\d)]/;
+    const correctOperaSqr = /[\d)]|\d\.\d/;
 
 
     // check if it only include calculable character and number
@@ -45,8 +44,6 @@ function checkAndInspect(text) {
 
     // delete all white space, split when it isn't number and filter to remove empty array item 
     toCalculate = text.replaceAll(" ", "").split(/([^\d.])/).filter(Boolean);
-
-    console.log(toCalculate)
 
     // get length and reduce by  1 to check last index
     length = toCalculate.length - 1;
@@ -137,7 +134,6 @@ function operation(toCalculate) {
 
     // check parameter isn't array 
     if (Array.isArray(toCalculate) == false) {
-        console.log(Array.isArray(toCalculate))
 
         // check and if it valid change to array
         toCalculate = checkAndInspect(toCalculate);
@@ -157,14 +153,9 @@ function operation(toCalculate) {
 
         // get last index of opening parentheses until first index of closing parentheses
         const openPeraIndex = toCalculate.findLastIndex((element, index) => element == "(" && index < closePeraIndex);
-        console.log(closePeraIndex)
-        console.log(openPeraIndex)
-        console.log(isNaN(closePeraIndex))
 
         // if parentheses exist start recursion
         if (openPeraIndex !== -1) {
-
-            console.log("start")
 
             // get sliced array
             let slicedToCalculated = toCalculate.slice(openPeraIndex + 1, closePeraIndex)
@@ -172,16 +163,8 @@ function operation(toCalculate) {
 
             // call recursion by passing sliced array 
             result = operation(slicedToCalculated)
-            console.log("finish")
-            console.log(result)
-
             // splice parentheses, it's between and put result in spliced place
             toCalculate.splice(openPeraIndex, closePeraIndex - openPeraIndex + 1, result);
-            console.log(toCalculate)
-
-            console.log(toCalculate)
-
-            console.log("end")
         }
 
     }
@@ -228,8 +211,6 @@ function operation(toCalculate) {
         // do not filter the rest of elements
         return true;
     })
-
-    console.log(toCalculate)
 
     // calculate * operators
     toCalculate = toCalculate.filter((element, index) => {
@@ -315,56 +296,93 @@ function operation(toCalculate) {
 
 function getUserInputAndReturnResult() {
 
-    const numpadButtons = document.querySelectorAll(".cal-numpad-button");
-    const numpadButtonsAc = document.querySelector(".cal-numpad-button-ac");
-    const numpadButtonsDel = document.querySelector(".cal-numpad-button-del");
-    const operator = document.querySelector(".cal-numpad-button-operation");
+
+    // get buttons for input buttons
+    const numPadButtons = document.querySelectorAll(".cal-num-pad-button");
+
+    // get button for clearing input
+    const numPadButtonsAc = document.querySelector(".cal-num-pad-button-ac");
+
+    // get button for deleting input
+    const numPadButtonsDel = document.querySelector(".cal-num-pad-button-del");
+
+    // get button for operation using input
+    const operator = document.querySelector(".cal-num-pad-button-operation");
+
+    // get input
     const userInput = document.querySelector(".cal-input-text");
 
-    numpadButtons.forEach((button) => {
+    // to check if user type incalculable input
+    let error = false;
 
-        console.log(button.textContent)
+    // focus on input
+    userInput.focus();
+
+
+    // add input buttons to EventListener
+    numPadButtons.forEach((button) => {
+
         button.addEventListener("click", () => {
-            console.log(button.textContent)
+
+            // clear if previous input was incalculable
+            if (error == true) {
+                userInput.value = "";
+                error = false;
+            }
+
             const inputOfButton = button.textContent;
+
+            // add text to value of userInput
             userInput.value += inputOfButton;
         })
 
     })
 
+    // add = button to EventListener
     operator.addEventListener("click", () => {
 
+        // get result from operation by passing input
         const result = operation(userInput.value);
+
+        // assign result to value of userInput
         userInput.value = result;
-        let error = false;    
+
+        // check if result is error
         if (typeof result == "string") {
-         error = true;
-            userInput.addEventListener("focus", () =>{
+
+            // made error true
+            error = true;
+
+            // clear input when user focus on input box
+            userInput.addEventListener("focus", () => {
+
+                // check if error is true
                 if (error == true) {
+
                     userInput.value = "";
+
+                    // made error false since input was cleared
                     error = false;
                 }
             })
         }
     })
 
-    numpadButtonsAc.addEventListener("click", () => {
+    // add AC button to EventListener
+    numPadButtonsAc.addEventListener("click", () => {
 
+        // clear value of input
         userInput.value = "";
-        
+
     })
 
-    numpadButtonsDel.addEventListener("click", () => {
+    // add DEL button to EventListener
+    numPadButtonsDel.addEventListener("click", () => {
 
+        // remove last index value of input
         userInput.value = userInput.value.slice(0, -1);
-        
+
     })
-
-
 }
 
-getUserInputAndReturnResult()
-
-
-
-
+getUserInputAndReturnResult();

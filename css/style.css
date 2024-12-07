@@ -1,0 +1,55 @@
+body {
+    height: 100vh;
+    font-family: 'Orbitron', sans-serif;
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.cal-container {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.cal-num-pad-row {
+    display: flex;
+}
+
+input,
+button {
+    font-size: 3vw;
+    padding: 1vw 0;
+    margin: 0;
+    border-width: 0.1vw;
+}
+
+input {
+    background-color: rgba(0, 0, 0, 0.903);
+    color: rgba(255, 255, 255, 0.858);
+    padding-bottom: 1vw;
+}
+
+.cal-num-pad-button,
+.cal-num-pad-button-ac,
+.cal-num-pad-button-del {
+    flex: 1;
+}
+
+.cal-num-pad-button-operation {
+    flex: 2;
+    background-color: rgb(245, 168, 80);
+    padding: 0 0.05vw;
+}
+
+.cal-num-pad-button-ac {
+
+    background-color: rgb(255, 87, 40);
+}
+
+.cal-border {
+    border-width: 0.2vw;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
+}
